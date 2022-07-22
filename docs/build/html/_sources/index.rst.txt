@@ -5,8 +5,7 @@
 
 UBC Expendable Wind Sensors
 ====================================
-.. figure::/img/expendable_sensors.jpg
-
+.. image:: /img/expendable_sensors.jpg
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
