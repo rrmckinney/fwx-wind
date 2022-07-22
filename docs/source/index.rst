@@ -5,13 +5,14 @@
 
 UBC Expendable Wind Sensors
 ====================================
+.. figure::/img/expendable_sensors.jpg
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    thesensor
-   Wind Sensor Code <code.ipynb>
+   Wind Sensor <code.ipynb>
    windbuild
    windtests
 
