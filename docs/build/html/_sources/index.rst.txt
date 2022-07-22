@@ -11,7 +11,7 @@ UBC Expendable Wind Sensors
    :caption: Contents:
 
    thesensor
-   code
+   Wind Sensor Code <code.ipynb>
    windbuild
    windtests
 
