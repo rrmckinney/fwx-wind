@@ -34,7 +34,11 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "817662f0",
-   "metadata": {},
+   "metadata": {
+    "vscode": {
+     "languageId": "cpp"
+    }
+   },
    "outputs": [],
    "source": [
     "#include \"TimerOne.h\"\n",
@@ -55,7 +59,11 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "7fb2a1df",
-   "metadata": {},
+   "metadata": {
+    "vscode": {
+     "languageId": "c"
+    }
+   },
    "outputs": [],
    "source": [
     "#define WindSensor_Pin (2) // digital pin for wind speed sensor\n",
@@ -75,7 +83,11 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "9b1b82f9",
-   "metadata": {},
+   "metadata": {
+    "vscode": {
+     "languageId": "cpp"
+    }
+   },
    "outputs": [],
    "source": [
     "volatile bool isSampleRequired; // this is set every 2.5sec to generate wind speed\n",
@@ -104,7 +116,11 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "0d9099b7",
-   "metadata": {},
+   "metadata": {
+    "vscode": {
+     "languageId": "cpp"
+    }
+   },
    "outputs": [],
    "source": [
     "static char fileName[] = \"windtest.txt\";\n",
@@ -123,7 +139,11 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "79264007",
-   "metadata": {},
+   "metadata": {
+    "vscode": {
+     "languageId": "javascript"
+    }
+   },
    "outputs": [],
    "source": [
     "void setup() {\n",
@@ -188,7 +208,11 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "2d07e841",
-   "metadata": {},
+   "metadata": {
+    "vscode": {
+     "languageId": "java"
+    }
+   },
    "outputs": [],
    "source": [
     "void loop() {\n",
@@ -259,7 +283,11 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "35f04cab",
-   "metadata": {},
+   "metadata": {
+    "vscode": {
+     "languageId": "cpp"
+    }
+   },
    "outputs": [],
    "source": [
     "void isr_timer() {\n",
@@ -285,7 +313,11 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "036880bb",
-   "metadata": {},
+   "metadata": {
+    "vscode": {
+     "languageId": "java"
+    }
+   },
    "outputs": [],
    "source": [
     "void getWindDirection() {\n",
