@@ -249,9 +249,545 @@ title="Print to PDF"
                 
               <div>
                 
-  <p>Wind Sensor Code</p>
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.jp-RenderedHTMLCommon thead,
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+.jp-RenderedHTMLCommon th,
+div.rendered_html th {
+  font-weight: bold;
+}
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.jp-RenderedHTMLCommon tbody tr:hover,
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<p>Wind Sensor Code</p>
 <div class="section" id="Wind-Sensor-Code">
 <h1>Wind Sensor Code<a class="headerlink" href="#Wind-Sensor-Code" title="Permalink to this headline">#</a></h1>
+<p>The sensors are controlled by Arduino sketches. Three modules from Arduino were used.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#include &quot;TimerOne.h&quot;</span>
+<span class="c1">#include &lt;math.h&gt;</span>
+<span class="c1">#include &lt;SD.h&gt;</span>
+<span class="c1">#include &lt;SPI.h&gt;</span>
+</pre></div>
+</div>
+</div>
+<p>Two pins are used to read the wind speed and wind direction from the davis senor. Wind speed is connected to a digital pin and wind direction is connected to a analog pin. If testing indicated the wind vane having an offset from the intented rest position, it can also be defined as a variable here.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#define WindSensor_Pin (2) // digital pin for wind speed sensor</span>
+<span class="c1">#define WindVane_Pin (A4) // analog pin for wind direction sensor</span>
+<span class="c1">#define VaneOffset 0 // define the offset for caclulating wind direction</span>
+<br/></pre></div>
+</div>
+</div>
+<p>Set variables for the sketch.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">volatile</span> <span class="nb">bool</span> <span class="n">isSampleRequired</span><span class="p">;</span> <span class="o">//</span> <span class="n">this</span> <span class="ow">is</span> <span class="nb">set</span> <span class="n">every</span> <span class="mf">2.5</span><span class="n">sec</span> <span class="n">to</span> <span class="n">generate</span> <span class="n">wind</span> <span class="n">speed</span>
+<span class="n">volatile</span> <span class="n">unsigned</span> <span class="nb">int</span> <span class="n">timerCount</span><span class="p">;</span> <span class="o">//</span> <span class="n">used</span> <span class="n">to</span> <span class="n">count</span> <span class="n">ticks</span> <span class="k">for</span> <span class="mf">2.5</span><span class="n">sec</span> <span class="n">timer</span> <span class="n">count</span>
+<span class="n">volatile</span> <span class="n">unsigned</span> <span class="n">long</span> <span class="n">rotations</span><span class="p">;</span> <span class="o">//</span> <span class="n">cup</span> <span class="n">rotation</span> <span class="n">counter</span> <span class="k">for</span> <span class="n">wind</span> <span class="n">speed</span> <span class="n">calcs</span>
+<span class="n">volatile</span> <span class="n">unsigned</span> <span class="n">long</span> <span class="n">contactBounceTime</span><span class="p">;</span> <span class="o">//</span> <span class="n">timer</span> <span class="n">to</span> <span class="n">avoid</span> <span class="n">contact</span> <span class="n">bounce</span> <span class="ow">in</span> <span class="n">wind</span> <span class="n">speed</span> <span class="n">sensor</span>
+<span class="n">volatile</span> <span class="nb">float</span> <span class="n">windSpeed</span><span class="p">;</span>
+
+<span class="nb">int</span> <span class="n">vaneValue</span><span class="p">;</span> <span class="o">//</span> <span class="n">raw</span> <span class="n">analog</span> <span class="n">value</span> <span class="kn">from</span> <span class="nn">wind</span> <span class="n">vane</span>
+<span class="nb">int</span> <span class="n">vaneDirection</span><span class="p">;</span> <span class="o">//</span> <span class="n">translated</span> <span class="mi">0</span> <span class="o">-</span> <span class="mi">360</span> <span class="n">wind</span> <span class="n">direction</span>
+<span class="nb">int</span> <span class="n">calDirection</span><span class="p">;</span> <span class="o">//</span> <span class="n">calibrated</span> <span class="n">direction</span> <span class="n">after</span> <span class="n">offset</span> <span class="n">applied</span>
+<span class="nb">int</span> <span class="n">lastDirValue</span><span class="p">;</span> <span class="o">//</span> <span class="n">last</span> <span class="n">recorded</span> <span class="n">direction</span> <span class="n">value</span>
+
+<span class="n">const</span> <span class="nb">int</span> <span class="n">chipSelect</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span> <span class="o">//</span> <span class="n">pin</span> <span class="k">with</span> <span class="n">sd</span> <span class="n">card</span> <span class="n">connected</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-cyan-fg">  Input </span><span class="ansi-green-fg">In [3]</span>
+<span class="ansi-red-fg">    volatile bool isSampleRequired; // this is set every 2.5sec to generate wind speed</span>
+             ^
+<span class="ansi-red-fg">SyntaxError</span><span class="ansi-red-fg">:</span> invalid syntax
+
+</pre></div></div>
+</div>
+<p>Setup file for data to be written to.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">char</span> <span class="n">fileName</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;windtest.txt&quot;</span><span class="p">;</span>
+<span class="n">static</span> <span class="n">char</span> <span class="n">header</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;time</span><span class="se">\t</span><span class="s2">wsp</span><span class="se">\t</span><span class="s2">wdir&quot;</span><span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-cyan-fg">  Input </span><span class="ansi-green-fg">In [4]</span>
+<span class="ansi-red-fg">    static char fileName[] = &#34;windtest.txt&#34;;</span>
+           ^
+<span class="ansi-red-fg">SyntaxError</span><span class="ansi-red-fg">:</span> invalid syntax
+
+</pre></div></div>
+</div>
+<p>Setup loop to reset senors and ensure everything is connected properly.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">setup</span><span class="p">()</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">This</span> <span class="n">prevents</span> <span class="nb">any</span> <span class="n">pins</span> <span class="n">floating</span><span class="o">.</span>
+  <span class="o">//</span><span class="k">for</span> <span class="p">(</span><span class="n">byte</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">19</span> <span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+  <span class="o">//</span>  <span class="n">pinMode</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">INPUT_PULLUP</span><span class="p">);</span>
+
+  <span class="o">//</span> <span class="n">setup</span> <span class="n">anemometer</span> <span class="n">values</span>
+  <span class="n">lastDirValue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">rotations</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">isSampleRequired</span> <span class="o">=</span> <span class="n">false</span><span class="p">;</span>
+
+  <span class="o">//</span> <span class="n">setup</span> <span class="n">timer</span> <span class="n">values</span>
+  <span class="n">timerCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="n">Serial</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span>
+  <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">);</span>
+  <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;UBC Wind Sensor&quot;</span><span class="p">);</span>
+
+  <span class="n">Serial</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">SD</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="n">chipSelect</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;SD card is present &amp; ready&quot;</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;SD card missing or failure&quot;</span><span class="p">);</span>
+    <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="o">//</span><span class="n">wait</span> <span class="n">here</span> <span class="n">forever</span>
+  <span class="p">}</span>
+
+  <span class="n">File</span> <span class="n">myFile</span> <span class="o">=</span> <span class="n">SD</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">FILE_WRITE</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">myFile</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">myFile</span><span class="o">.</span><span class="n">println</span><span class="p">((</span><span class="n">char</span><span class="o">*</span><span class="p">)</span><span class="n">header</span><span class="p">);</span>
+    <span class="n">myFile</span><span class="o">.</span><span class="n">close</span><span class="p">();</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">((</span><span class="n">char</span><span class="o">*</span><span class="p">)</span><span class="n">header</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;error opening .txt&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="n">pinMode</span><span class="p">(</span><span class="n">WindSensor_Pin</span><span class="p">,</span> <span class="n">INPUT_PULLUP</span><span class="p">);</span>
+  <span class="n">attachInterrupt</span><span class="p">(</span><span class="n">digitalPinToInterrupt</span><span class="p">(</span><span class="n">WindSensor_Pin</span><span class="p">),</span> <span class="n">isr_rotation</span><span class="p">,</span> <span class="n">FALLING</span><span class="p">);</span>
+
+  <span class="o">//</span><span class="n">pinMode</span><span class="p">(</span><span class="n">WindSensor_Pin</span><span class="p">,</span> <span class="n">INPUT_PULLUP</span><span class="p">);</span>
+  <span class="o">//</span><span class="n">attachInterrupt</span><span class="p">(</span><span class="n">digitalPinToInterrupt</span><span class="p">(</span><span class="n">WindSensor_Pin</span><span class="p">),</span> <span class="n">isr_rotation</span><span class="p">,</span> <span class="n">RISING</span><span class="p">);</span>
+
+  <span class="o">//</span> <span class="n">setup</span> <span class="n">the</span> <span class="n">timer</span> <span class="k">for</span> <span class="mf">0.5</span> <span class="n">second</span>
+  <span class="n">Timer1</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="mi">500000</span><span class="p">);</span>
+  <span class="n">Timer1</span><span class="o">.</span><span class="n">attachInterrupt</span><span class="p">(</span><span class="n">isr_timer</span><span class="p">);</span>
+
+ <span class="n">sei</span><span class="p">();</span> <span class="o">//</span> <span class="n">Enable</span> <span class="n">Interrupts</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-cyan-fg">  Input </span><span class="ansi-green-fg">In [5]</span>
+<span class="ansi-red-fg">    void setup() {</span>
+         ^
+<span class="ansi-red-fg">SyntaxError</span><span class="ansi-red-fg">:</span> invalid syntax
+
+</pre></div></div>
+</div>
+<p>Setup loop to write wind speed and direction to the ouput file. The sensor does not have an internal clock, but does keep track of millisecinds since power was introduced. However, due to memory it can only keep track of a certain number of milliseconds, so we need to convert them to hours/minutes/seconds.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">loop</span><span class="p">()</span> <span class="p">{</span>
+
+<span class="o">//</span>    <span class="n">getWindDirection</span><span class="p">();</span>
+<span class="o">//</span>    <span class="k">if</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">calDirection</span> <span class="o">-</span> <span class="n">lastDirValue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+<span class="o">//</span>      <span class="n">lastDirValue</span> <span class="o">=</span> <span class="n">calDirection</span><span class="p">;</span>
+<span class="o">//</span>    <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">isSampleRequired</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">getWindDirection</span><span class="p">();</span>
+    <span class="n">unsigned</span> <span class="n">long</span> <span class="n">prMillis</span> <span class="o">=</span> <span class="n">millis</span><span class="p">();</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">millis</span><span class="p">()</span> <span class="o">-</span> <span class="n">prMillis</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">)</span> <span class="p">{</span>
+      <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">prMillis</span> <span class="o">=</span> <span class="n">millis</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">;</span>
+    <span class="n">byte</span> <span class="n">sec</span> <span class="o">=</span> <span class="n">prMillis</span> <span class="o">%</span> <span class="mi">60</span><span class="p">;</span>
+    <span class="n">prMillis</span> <span class="o">=</span> <span class="n">prMillis</span> <span class="o">/</span> <span class="mi">60</span><span class="p">;</span>
+    <span class="n">byte</span> <span class="nb">min</span> <span class="o">=</span> <span class="n">prMillis</span> <span class="o">%</span> <span class="mi">60</span><span class="p">;</span>
+    <span class="n">prMillis</span> <span class="o">=</span> <span class="n">prMillis</span> <span class="o">/</span> <span class="mi">60</span><span class="p">;</span>
+    <span class="n">byte</span> <span class="n">hrs</span> <span class="o">=</span> <span class="n">prMillis</span> <span class="o">%</span> <span class="mi">24</span><span class="p">;</span>
+
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">hrs</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="nb">min</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">sec</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">);</span>
+
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">windSpeed</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot; mph</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">calDirection</span><span class="p">);</span>
+
+    <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">);</span>
+    <span class="n">File</span> <span class="n">myFile</span> <span class="o">=</span> <span class="n">SD</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">FILE_WRITE</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">myFile</span><span class="p">)</span> <span class="o">//</span> <span class="n">it</span> <span class="n">opened</span> <span class="n">OK</span>
+    <span class="p">{</span>
+      <span class="o">//</span><span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;Writing to windtest.txt&quot;</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">hrs</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="nb">min</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">sec</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">windSpeed</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="n">calDirection</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">close</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">else</span><span class="p">{</span>
+      <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;Error opening simple.txt&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">isSampleRequired</span> <span class="o">=</span> <span class="n">false</span><span class="p">;</span>
+    <span class="o">//</span><span class="n">Serial</span><span class="o">.</span><span class="n">end</span><span class="p">();</span> <span class="o">//</span> <span class="ow">not</span> <span class="n">sure</span> <span class="k">if</span> <span class="n">needed</span>
+
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-cyan-fg">  Input </span><span class="ansi-green-fg">In [6]</span>
+<span class="ansi-red-fg">    void loop() {</span>
+         ^
+<span class="ansi-red-fg">SyntaxError</span><span class="ansi-red-fg">:</span> invalid syntax
+
+</pre></div></div>
+</div>
+<p>Wind speed is collected as the number of rotations every 2.5s. The pin is then interrupted for 0.5s so the total can be reset. The total number of rotations is multiplied by 0.9 to get the wind speed as specified by the <a class="reference external" href="https://cdn.shopify.com/s/files/1/0515/5992/3873/files/6410_SS.pdf">Davis cup anemometer manual</a>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">isr_timer</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">timerCount</span><span class="o">++</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">timerCount</span> <span class="o">==</span> <span class="mi">6</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">windSpeed</span> <span class="o">=</span> <span class="n">rotations</span> <span class="o">*</span> <span class="mf">0.9</span><span class="p">;</span>
+    <span class="n">rotations</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">isSampleRequired</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
+    <span class="n">timerCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-cyan-fg">  Input </span><span class="ansi-green-fg">In [7]</span>
+<span class="ansi-red-fg">    void isr_timer() {</span>
+         ^
+<span class="ansi-red-fg">SyntaxError</span><span class="ansi-red-fg">:</span> invalid syntax
+
+</pre></div></div>
+</div>
+<p>Function for getting wind direction. Wind direction is read as an offset from the orgin position (0 degrees) up to 1023 degrees. This needs to be re-mapped to follow the 360 degrees we use for direction.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">getWindDirection</span><span class="p">()</span> <span class="p">{</span>
+  <span class="o">//</span><span class="n">vaneValue</span> <span class="o">=</span> <span class="n">analogRead</span><span class="p">(</span><span class="n">WindVane_Pin</span><span class="p">);</span>
+ <span class="o">//</span> <span class="n">vaneDirection</span> <span class="o">=</span> <span class="p">(</span><span class="n">vaneValue</span> <span class="o">/</span> <span class="mf">1024.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">360.0</span><span class="p">;</span>
+  <span class="n">vaneValue</span> <span class="o">=</span> <span class="n">analogRead</span><span class="p">(</span><span class="n">WindVane_Pin</span><span class="p">);</span>
+  <span class="n">vaneDirection</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">vaneValue</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1023</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">359</span><span class="p">);</span>
+  <span class="n">calDirection</span> <span class="o">=</span> <span class="n">vaneDirection</span> <span class="o">+</span> <span class="n">VaneOffset</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">calDirection</span> <span class="o">&gt;</span> <span class="mi">360</span><span class="p">)</span>
+    <span class="n">calDirection</span> <span class="o">=</span> <span class="n">calDirection</span> <span class="o">-</span> <span class="mi">360</span><span class="p">;</span>
+
+  <span class="k">if</span><span class="p">(</span><span class="n">calDirection</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">calDirection</span> <span class="o">=</span> <span class="n">calDirection</span> <span class="o">+</span> <span class="mi">360</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-cyan-fg">  Input </span><span class="ansi-green-fg">In [8]</span>
+<span class="ansi-red-fg">    void getWindDirection() {</span>
+         ^
+<span class="ansi-red-fg">SyntaxError</span><span class="ansi-red-fg">:</span> invalid syntax
+
+</pre></div></div>
+</div>
 </div>
 
 

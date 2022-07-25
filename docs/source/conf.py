@@ -41,6 +41,7 @@ extensions = [
     "sphinx_copybutton"
 ]
 
+nbsphinx_allow_errors = True
 # Idk Chris told me this would enable math equations - stay tuned
 myst_enable_extensions = [
     "amsmath",
