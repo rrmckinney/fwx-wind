@@ -29,7 +29,7 @@ slice_fd = [20, -5]
 
 
 # ## set path to sonic data and sort all files for date of interest
-sonic_in = sorted(Path(str(data_dir) + "\\sonic\\").glob(f"{file_dates[0]}*.GILL01"))
+sonic_in = sorted(Path(str(data_dir) + "data_20"+file_dates[1] +"\\sonic\\").glob(f"{file_dates[0]}*.GILL01"))
 
 ## open reach file as a dataframe and sort in list
 sonic_list = [get_sonic(str(sonic_in[i]), i, len(sonic_in)) for i in range(len(sonic_in))]
@@ -59,7 +59,7 @@ for i in range(len(directions)):
 
     for i in range(len(ubc_winds)):
         cup_in = sorted(
-            Path(str(data_dir) + f"\\WIND{ubc_winds[i]}\\").glob(f"20{file_date}*.TXT")
+            Path(str(data_dir) +"data_20"+file_dates[1] + f"\\WIND{ubc_winds[i]}\\").glob(f"20{file_date}*.TXT")
         )
 
         print(str(data_dir) + f"\\WIND{ubc_winds[i]}\\")

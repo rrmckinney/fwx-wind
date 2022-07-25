@@ -20,7 +20,7 @@ root_dir = notebooks_dir.parents[0]
 img_dir = root_dir / Path("img")
 data_dir = root_dir / Path("data")
 time_dir = root_dir /data_dir/Path("time")
-sonic_dir = root_dir /Path("sonic")
+sonic_dir = root_dir /data_dir/Path("sonic")
 
 sys.path.insert(0, str(root_dir))
 sep = "*" * 30
