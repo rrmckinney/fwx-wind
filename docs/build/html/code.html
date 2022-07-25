@@ -34,8 +34,6 @@
     <script src="_static/copybutton.js"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Wind Tunnel Build" href="windbuild.html" />
@@ -188,7 +186,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="_sources/code.ipynb.txt"
+        <a href="_sources/code.md.txt"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -199,7 +197,7 @@ title="Download source file"
 <span class="headerbtn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="headerbtn__text-container">.ipynb</span>
+<span class="headerbtn__text-container">.md</span>
 </a>
 
       </li>
@@ -249,153 +247,177 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="section" id="Wind-Sensor-Code">
-<h1>Wind Sensor Code<a class="headerlink" href="#Wind-Sensor-Code" title="Permalink to this headline">#</a></h1>
+  <div class="tex2jax_ignore mathjax_ignore section" id="wind-sensor-code">
+<h1>Wind Sensor Code<a class="headerlink" href="#wind-sensor-code" title="Permalink to this headline">#</a></h1>
 <p>The sensors are controlled by Arduino sketches. Three modules from Arduino were used.</p>
-#include "TimerOne.h"
-#include <math.h>
-#include <SD.h>
-#include <SPI.h><p>Two pins are used to read the wind speed and wind direction from the davis senor. Wind speed is connected to a digital pin and wind direction is connected to a analog pin. If testing indicated the wind vane having an offset from the intented rest position, it can also be defined as a variable here.</p>
-#define WindSensor_Pin (2) // digital pin for wind speed sensor
-#define WindVane_Pin (A4) // analog pin for wind direction sensor
-#define VaneOffset 0 // define the offset for caclulating wind direction<p>Set variables for the sketch.</p>
-volatile bool isSampleRequired; // this is set every 2.5sec to generate wind speed
-volatile unsigned int timerCount; // used to count ticks for 2.5sec timer count
-volatile unsigned long rotations; // cup rotation counter for wind speed calcs
-volatile unsigned long contactBounceTime; // timer to avoid contact bounce in wind speed sensor
-volatile float windSpeed;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#include &quot;TimerOne.h&quot;</span>
+<span class="c1">#include &lt;math.h&gt;</span>
+<span class="c1">#include &lt;SD.h&gt;</span>
+<span class="c1">#include &lt;SPI.h&gt;</span>
+</pre></div>
+</div>
+<p>Two pins are used to read the wind speed and wind direction from the davis senor. Wind speed is connected to a digital pin and wind direction is connected to a analog pin. If testing indicated the wind vane having an offset from the intented rest position, it can also be defined as a variable here.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define WindSensor_Pin (2) // digital pin for wind speed sensor</span>
+<span class="c1">#define WindVane_Pin (A4) // analog pin for wind direction sensor</span>
+<span class="c1">#define VaneOffset 0 // define the offset for caclulating wind direction</span>
+</pre></div>
+</div>
+<p>Set variables for the sketch.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">volatile</span> <span class="nb">bool</span> <span class="n">isSampleRequired</span><span class="p">;</span> <span class="o">//</span> <span class="n">this</span> <span class="ow">is</span> <span class="nb">set</span> <span class="n">every</span> <span class="mf">2.5</span><span class="n">sec</span> <span class="n">to</span> <span class="n">generate</span> <span class="n">wind</span> <span class="n">speed</span>
+<span class="n">volatile</span> <span class="n">unsigned</span> <span class="nb">int</span> <span class="n">timerCount</span><span class="p">;</span> <span class="o">//</span> <span class="n">used</span> <span class="n">to</span> <span class="n">count</span> <span class="n">ticks</span> <span class="k">for</span> <span class="mf">2.5</span><span class="n">sec</span> <span class="n">timer</span> <span class="n">count</span>
+<span class="n">volatile</span> <span class="n">unsigned</span> <span class="n">long</span> <span class="n">rotations</span><span class="p">;</span> <span class="o">//</span> <span class="n">cup</span> <span class="n">rotation</span> <span class="n">counter</span> <span class="k">for</span> <span class="n">wind</span> <span class="n">speed</span> <span class="n">calcs</span>
+<span class="n">volatile</span> <span class="n">unsigned</span> <span class="n">long</span> <span class="n">contactBounceTime</span><span class="p">;</span> <span class="o">//</span> <span class="n">timer</span> <span class="n">to</span> <span class="n">avoid</span> <span class="n">contact</span> <span class="n">bounce</span> <span class="ow">in</span> <span class="n">wind</span> <span class="n">speed</span> <span class="n">sensor</span>
+<span class="n">volatile</span> <span class="nb">float</span> <span class="n">windSpeed</span><span class="p">;</span>
 
-int vaneValue; // raw analog value from wind vane
-int vaneDirection; // translated 0 - 360 wind direction
-int calDirection; // calibrated direction after offset applied
-int lastDirValue; // last recorded direction value
+<span class="nb">int</span> <span class="n">vaneValue</span><span class="p">;</span> <span class="o">//</span> <span class="n">raw</span> <span class="n">analog</span> <span class="n">value</span> <span class="kn">from</span> <span class="nn">wind</span> <span class="n">vane</span>
+<span class="nb">int</span> <span class="n">vaneDirection</span><span class="p">;</span> <span class="o">//</span> <span class="n">translated</span> <span class="mi">0</span> <span class="o">-</span> <span class="mi">360</span> <span class="n">wind</span> <span class="n">direction</span>
+<span class="nb">int</span> <span class="n">calDirection</span><span class="p">;</span> <span class="o">//</span> <span class="n">calibrated</span> <span class="n">direction</span> <span class="n">after</span> <span class="n">offset</span> <span class="n">applied</span>
+<span class="nb">int</span> <span class="n">lastDirValue</span><span class="p">;</span> <span class="o">//</span> <span class="n">last</span> <span class="n">recorded</span> <span class="n">direction</span> <span class="n">value</span>
 
-const int chipSelect = 10; // pin with sd card connected<p>Setup file for data to be written to.</p>
-static char fileName[] = "windtest.txt";
-static char header[] = {"time\twsp\twdir"};<p>Setup loop to reset senors and ensure everything is connected properly.</p>
-void setup() {
-  // This prevents any pins floating.
-  //for (byte i = 2 ; i <= 19 ; i++)
-  //  pinMode (i, INPUT_PULLUP);
+<span class="n">const</span> <span class="nb">int</span> <span class="n">chipSelect</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span> <span class="o">//</span> <span class="n">pin</span> <span class="k">with</span> <span class="n">sd</span> <span class="n">card</span> <span class="n">connected</span>
+</pre></div>
+</div>
+<p>Setup file for data to be written to.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">char</span> <span class="n">fileName</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;windtest.txt&quot;</span><span class="p">;</span>
+<span class="n">static</span> <span class="n">char</span> <span class="n">header</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;time</span><span class="se">\t</span><span class="s2">wsp</span><span class="se">\t</span><span class="s2">wdir&quot;</span><span class="p">};</span>
+</pre></div>
+</div>
+<p>Setup loop to reset senors and ensure everything is connected properly.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">setup</span><span class="p">()</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">This</span> <span class="n">prevents</span> <span class="nb">any</span> <span class="n">pins</span> <span class="n">floating</span><span class="o">.</span>
+  <span class="o">//</span><span class="k">for</span> <span class="p">(</span><span class="n">byte</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">19</span> <span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+  <span class="o">//</span>  <span class="n">pinMode</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">INPUT_PULLUP</span><span class="p">);</span>
+    
+  <span class="o">//</span> <span class="n">setup</span> <span class="n">anemometer</span> <span class="n">values</span>
+  <span class="n">lastDirValue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">rotations</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">isSampleRequired</span> <span class="o">=</span> <span class="n">false</span><span class="p">;</span>
 
-  // setup anemometer values
-  lastDirValue = 0;
-  rotations = 0;
-  isSampleRequired = false;
+  <span class="o">//</span> <span class="n">setup</span> <span class="n">timer</span> <span class="n">values</span>
+  <span class="n">timerCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-  // setup timer values
-  timerCount = 0;
+  <span class="n">Serial</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span>
+  <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">);</span>
+  <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;UBC Wind Sensor&quot;</span><span class="p">);</span>
 
-  Serial.begin(9600);
-  Serial.println(" ");
-  Serial.println("UBC Wind Sensor");
+  <span class="n">Serial</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">SD</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="n">chipSelect</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;SD card is present &amp; ready&quot;</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;SD card missing or failure&quot;</span><span class="p">);</span>
+    <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="o">//</span><span class="n">wait</span> <span class="n">here</span> <span class="n">forever</span>
+  <span class="p">}</span>
 
-  Serial.begin(9600);
-  if (SD.begin(chipSelect)) {
-    Serial.println("SD card is present & ready");
-  } else {
-    Serial.println("SD card missing or failure");
-    while (1); //wait here forever
-  }
+  <span class="n">File</span> <span class="n">myFile</span> <span class="o">=</span> <span class="n">SD</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">FILE_WRITE</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">myFile</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">myFile</span><span class="o">.</span><span class="n">println</span><span class="p">((</span><span class="n">char</span><span class="o">*</span><span class="p">)</span><span class="n">header</span><span class="p">);</span>
+    <span class="n">myFile</span><span class="o">.</span><span class="n">close</span><span class="p">();</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">((</span><span class="n">char</span><span class="o">*</span><span class="p">)</span><span class="n">header</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;error opening .txt&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
 
-  File myFile = SD.open(fileName, FILE_WRITE);
-  if (myFile) {
-    myFile.println((char*)header);
-    myFile.close();
-    Serial.println((char*)header);
-  }
-  else {
-    Serial.println("error opening .txt");
-  }
+  <span class="n">pinMode</span><span class="p">(</span><span class="n">WindSensor_Pin</span><span class="p">,</span> <span class="n">INPUT_PULLUP</span><span class="p">);</span>
+  <span class="n">attachInterrupt</span><span class="p">(</span><span class="n">digitalPinToInterrupt</span><span class="p">(</span><span class="n">WindSensor_Pin</span><span class="p">),</span> <span class="n">isr_rotation</span><span class="p">,</span> <span class="n">FALLING</span><span class="p">);</span>
 
-  pinMode(WindSensor_Pin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(WindSensor_Pin), isr_rotation, FALLING);
+  <span class="o">//</span><span class="n">pinMode</span><span class="p">(</span><span class="n">WindSensor_Pin</span><span class="p">,</span> <span class="n">INPUT_PULLUP</span><span class="p">);</span>
+  <span class="o">//</span><span class="n">attachInterrupt</span><span class="p">(</span><span class="n">digitalPinToInterrupt</span><span class="p">(</span><span class="n">WindSensor_Pin</span><span class="p">),</span> <span class="n">isr_rotation</span><span class="p">,</span> <span class="n">RISING</span><span class="p">);</span>
 
-  //pinMode(WindSensor_Pin, INPUT_PULLUP);
-  //attachInterrupt(digitalPinToInterrupt(WindSensor_Pin), isr_rotation, RISING);
+  <span class="o">//</span> <span class="n">setup</span> <span class="n">the</span> <span class="n">timer</span> <span class="k">for</span> <span class="mf">0.5</span> <span class="n">second</span>
+  <span class="n">Timer1</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="mi">500000</span><span class="p">);</span>
+  <span class="n">Timer1</span><span class="o">.</span><span class="n">attachInterrupt</span><span class="p">(</span><span class="n">isr_timer</span><span class="p">);</span>
 
-  // setup the timer for 0.5 second
-  Timer1.initialize(500000);
-  Timer1.attachInterrupt(isr_timer);
+ <span class="n">sei</span><span class="p">();</span> <span class="o">//</span> <span class="n">Enable</span> <span class="n">Interrupts</span>
 
- sei(); // Enable Interrupts
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Setup loop to write wind speed and direction to the ouput file. The sensor does not have an internal clock, but does keep track of millisecinds since power was introduced. However, due to memory it can only keep track of a certain number of milliseconds, so we need to convert them to hours/minutes/seconds.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">loop</span><span class="p">()</span> <span class="p">{</span>
 
-}<p>Setup loop to write wind speed and direction to the ouput file. The sensor does not have an internal clock, but does keep track of millisecinds since power was introduced. However, due to memory it can only keep track of a certain number of milliseconds, so we need to convert them to hours/minutes/seconds.</p>
-void loop() {
+<span class="o">//</span>    <span class="n">getWindDirection</span><span class="p">();</span>
+<span class="o">//</span>    <span class="k">if</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">calDirection</span> <span class="o">-</span> <span class="n">lastDirValue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+<span class="o">//</span>      <span class="n">lastDirValue</span> <span class="o">=</span> <span class="n">calDirection</span><span class="p">;</span>
+<span class="o">//</span>    <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="n">isSampleRequired</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">getWindDirection</span><span class="p">();</span>
+    <span class="n">unsigned</span> <span class="n">long</span> <span class="n">prMillis</span> <span class="o">=</span> <span class="n">millis</span><span class="p">();</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">millis</span><span class="p">()</span> <span class="o">-</span> <span class="n">prMillis</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">)</span> <span class="p">{</span>
+      <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">prMillis</span> <span class="o">=</span> <span class="n">millis</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">;</span>
+    <span class="n">byte</span> <span class="n">sec</span> <span class="o">=</span> <span class="n">prMillis</span> <span class="o">%</span> <span class="mi">60</span><span class="p">;</span>
+    <span class="n">prMillis</span> <span class="o">=</span> <span class="n">prMillis</span> <span class="o">/</span> <span class="mi">60</span><span class="p">;</span>
+    <span class="n">byte</span> <span class="nb">min</span> <span class="o">=</span> <span class="n">prMillis</span> <span class="o">%</span> <span class="mi">60</span><span class="p">;</span>
+    <span class="n">prMillis</span> <span class="o">=</span> <span class="n">prMillis</span> <span class="o">/</span> <span class="mi">60</span><span class="p">;</span>
+    <span class="n">byte</span> <span class="n">hrs</span> <span class="o">=</span> <span class="n">prMillis</span> <span class="o">%</span> <span class="mi">24</span><span class="p">;</span>
 
-//    getWindDirection();
-//    if (abs(calDirection - lastDirValue) > 5) {
-//      lastDirValue = calDirection;
-//    }
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">hrs</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="nb">min</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">sec</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">);</span>
 
-  if (isSampleRequired) {
-    getWindDirection();
-    unsigned long prMillis = millis();
-    while (millis() - prMillis < 1000) {
-      ;
-    }
-    prMillis = millis() / 1000;
-    byte sec = prMillis % 60;
-    prMillis = prMillis / 60;
-    byte min = prMillis % 60;
-    prMillis = prMillis / 60;
-    byte hrs = prMillis % 24;
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">windSpeed</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot; mph</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">calDirection</span><span class="p">);</span>
+  
+    <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">);</span>
+    <span class="n">File</span> <span class="n">myFile</span> <span class="o">=</span> <span class="n">SD</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">FILE_WRITE</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">myFile</span><span class="p">)</span> <span class="o">//</span> <span class="n">it</span> <span class="n">opened</span> <span class="n">OK</span>
+    <span class="p">{</span>
+      <span class="o">//</span><span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;Writing to windtest.txt&quot;</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">hrs</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="nb">min</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">sec</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">windSpeed</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="n">calDirection</span><span class="p">);</span>
+      <span class="n">myFile</span><span class="o">.</span><span class="n">close</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">else</span><span class="p">{</span>
+      <span class="n">Serial</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;Error opening simple.txt&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">isSampleRequired</span> <span class="o">=</span> <span class="n">false</span><span class="p">;</span>
+    <span class="o">//</span><span class="n">Serial</span><span class="o">.</span><span class="n">end</span><span class="p">();</span> <span class="o">//</span> <span class="ow">not</span> <span class="n">sure</span> <span class="k">if</span> <span class="n">needed</span>
 
-    Serial.print(hrs);
-    Serial.print(':');
-    Serial.print(min);
-    Serial.print(':');
-    Serial.print(sec);
-    Serial.print("\t");
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Wind speed is collected as the number of rotations every 2.5s. The pin is then interrupted for 0.5s so the total can be reset. The total number of rotations is multiplied by 0.9 to get the wind speed as specified by the <a class="reference external" href="https://cdn.shopify.com/s/files/1/0515/5992/3873/files/6410_SS.pdf">Davis cup anemometer manual</a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">isr_timer</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">timerCount</span><span class="o">++</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">timerCount</span> <span class="o">==</span> <span class="mi">6</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">windSpeed</span> <span class="o">=</span> <span class="n">rotations</span> <span class="o">*</span> <span class="mf">0.9</span><span class="p">;</span>
+    <span class="n">rotations</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">isSampleRequired</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
+    <span class="n">timerCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Function for getting wind direction. Wind direction is read as an offset from the orgin position (0 degrees) up to 1023 degrees. This needs to be re-mapped to follow the 360 degrees we use for direction.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">getWindDirection</span><span class="p">()</span> <span class="p">{</span>
+  <span class="o">//</span><span class="n">vaneValue</span> <span class="o">=</span> <span class="n">analogRead</span><span class="p">(</span><span class="n">WindVane_Pin</span><span class="p">);</span> 
+ <span class="o">//</span> <span class="n">vaneDirection</span> <span class="o">=</span> <span class="p">(</span><span class="n">vaneValue</span> <span class="o">/</span> <span class="mf">1024.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">360.0</span><span class="p">;</span>
+  <span class="n">vaneValue</span> <span class="o">=</span> <span class="n">analogRead</span><span class="p">(</span><span class="n">WindVane_Pin</span><span class="p">);</span>
+  <span class="n">vaneDirection</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">vaneValue</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1023</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">359</span><span class="p">);</span>
+  <span class="n">calDirection</span> <span class="o">=</span> <span class="n">vaneDirection</span> <span class="o">+</span> <span class="n">VaneOffset</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">calDirection</span> <span class="o">&gt;</span> <span class="mi">360</span><span class="p">)</span>
+    <span class="n">calDirection</span> <span class="o">=</span> <span class="n">calDirection</span> <span class="o">-</span> <span class="mi">360</span><span class="p">;</span>
 
-    Serial.print(windSpeed);
-    Serial.print(" mph\t");
-    Serial.print(calDirection);
-
-    Serial.println("*");
-    File myFile = SD.open(fileName, FILE_WRITE);
-    if (myFile) // it opened OK
-    {
-      //Serial.println("Writing to windtest.txt");
-      myFile.print(hrs);
-      myFile.print(':');
-      myFile.print(min);
-      myFile.print(':');
-      myFile.print(sec);
-      myFile.print("\t");
-      myFile.print(windSpeed);
-      myFile.print("\t");
-      myFile.println(calDirection);
-      myFile.close();
-    } else{
-      Serial.println("Error opening simple.txt");
-    }
-    isSampleRequired = false;
-    //Serial.end(); // not sure if needed
-
-  }
-}<p>Wind speed is collected as the number of rotations every 2.5s. The pin is then interrupted for 0.5s so the total can be reset. The total number of rotations is multiplied by 0.9 to get the wind speed as specified by the <a class="reference external" href="https://cdn.shopify.com/s/files/1/0515/5992/3873/files/6410_SS.pdf">Davis cup anemometer manual</a>.</p>
-void isr_timer() {
-  timerCount++;
-  if (timerCount == 6) {
-    windSpeed = rotations * 0.9;
-    rotations = 0;
-    isSampleRequired = true;
-    timerCount = 0;
-  }
-}<p>Function for getting wind direction. Wind direction is read as an offset from the orgin position (0 degrees) up to 1023 degrees. This needs to be re-mapped to follow the 360 degrees we use for direction.</p>
-void getWindDirection() {
-  //vaneValue = analogRead(WindVane_Pin);
- // vaneDirection = (vaneValue / 1024.0) * 360.0;
-  vaneValue = analogRead(WindVane_Pin);
-  vaneDirection = map(vaneValue, 0, 1023, 0, 359);
-  calDirection = vaneDirection + VaneOffset;
-  if (calDirection > 360)
-    calDirection = calDirection - 360;
-
-  if(calDirection < 0)
-    calDirection = calDirection + 360;
-}</div>
+  <span class="k">if</span><span class="p">(</span><span class="n">calDirection</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">calDirection</span> <span class="o">=</span> <span class="n">calDirection</span> <span class="o">+</span> <span class="mi">360</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
 
 
               </div>
