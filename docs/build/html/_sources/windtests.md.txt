@@ -114,11 +114,12 @@ def get_sonic(filein, i, length):
 
     sonic_df = sonic_df.reset_index()
     return sonic_df
-    ```
+
+```
 
     Read in cup data and split into the three different tests using time stamps recorded.
 
-    ```
+```
     for i in range(0,len(c[0])):
 
     times_in = Path(str(data_dir)+"_20"+str(c[0][i])+"\\"+"time\\"+str(c[0][i])+".txt", sep="\t")
@@ -186,6 +187,7 @@ def get_sonic(filein, i, length):
         cup_wdir_speed2.append(round(cups2["wdir"].mean(),0))
         cup_wdir_speed3.append(round(cups3["wdir"].mean(),0))
         wind_sens.append(f"wind{r+1}")
+
 ```
 
 Match sonic data to cup data for the three different tests.
@@ -222,10 +224,14 @@ for i in range(0,len(s[0])):
                 sonic_mean_wdir3.append(round(sonic_df.iloc[:,9].mean(), 0))
 
         sonic_sens.append(f"sonic{r+1}")
-    ```
+
+```
+
     Plot sonic and cup data for the same position for all three fan speeds.
-    ```
-    fig = plt.figure(figsize=(12, 8))  # (Width, height) in inches.
+
+```
+
+fig = plt.figure(figsize=(12, 8))  # (Width, height) in inches.
 fig = plt.title(
     f"Position 2 for Cups",
     y=0.9,

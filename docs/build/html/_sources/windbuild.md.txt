@@ -10,7 +10,7 @@ The tunnel was constructed using four pieces of 2x2x8 ft plywood sheets faceted 
 
 A flow straightener was constructed of corruagted plastic sheets. To ensure good flow, the straightener cannot take up more than 10% of the area in the tunnel, therefore each of the sections were 3x3x15 inches. 
 
-![Flow straightener under construction](/pics/flow_straight/png)
+![Flow straightener under construction](/pics/flow_straight.png)
 
 A fan was then placed a foor behind the flow straightener. The sonic and davis wind sensors were placed on the other end. 
 
