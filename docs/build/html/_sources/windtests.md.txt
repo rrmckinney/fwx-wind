@@ -420,4 +420,6 @@ Read in function for each sensor.
 ```
 
 ![Multiple linear regression for all the expendable sensors in position 1.](/pics/position1-mlr-1.png)
-![Multiple linear regression for all the expendable sensors in position 1.](/pics/position1-mlr-1.png)
+![Multiple linear regression for all the expendable sensors in position 1.](/pics/position1-mlr-2.png)
+![Multiple linear regression for all the expendable sensors in position 1.](/pics/position1-mlr-3.png)
+![Multiple linear regression for all the expendable sensors in position 1.](/pics/position1-mlr-4.png)
