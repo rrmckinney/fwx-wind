@@ -117,7 +117,7 @@ def get_sonic(filein, i, length):
 
 ```
 
-    Read in cup data and split into the three different tests using time stamps recorded.
+Read in cup data and split into the three different tests using time stamps recorded.
 
 ```
     for i in range(0,len(c[0])):
@@ -227,7 +227,7 @@ for i in range(0,len(s[0])):
 
 ```
 
-    Plot sonic and cup data for the same position for all three fan speeds.
+Plot sonic and cup data for the same position for all three fan speeds.
 
 ```
 

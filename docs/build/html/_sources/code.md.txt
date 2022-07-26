@@ -163,7 +163,7 @@ void isr_timer() {
   }
 }
 ```
-Function for getting wind direction. Wind direction is read as an offset from the orgin position (0 degrees) up to 1023 degrees. This needs to be re-mapped to follow the 360 degrees we use for direction. 
+Function for getting wind direction. Wind direction is read as an offset from the orgin position (0 degrees) up to 1023 degrees. This needs to be re-mapped to follow the 360 degrees used for direction. 
 ```
 void getWindDirection() {
   //vaneValue = analogRead(WindVane_Pin); 

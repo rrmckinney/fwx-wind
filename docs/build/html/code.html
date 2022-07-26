@@ -402,7 +402,7 @@ title="Print to PDF"
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Function for getting wind direction. Wind direction is read as an offset from the orgin position (0 degrees) up to 1023 degrees. This needs to be re-mapped to follow the 360 degrees we use for direction.</p>
+<p>Function for getting wind direction. Wind direction is read as an offset from the orgin position (0 degrees) up to 1023 degrees. This needs to be re-mapped to follow the 360 degrees used for direction.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">getWindDirection</span><span class="p">()</span> <span class="p">{</span>
   <span class="o">//</span><span class="n">vaneValue</span> <span class="o">=</span> <span class="n">analogRead</span><span class="p">(</span><span class="n">WindVane_Pin</span><span class="p">);</span> 
  <span class="o">//</span> <span class="n">vaneDirection</span> <span class="o">=</span> <span class="p">(</span><span class="n">vaneValue</span> <span class="o">/</span> <span class="mf">1024.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">360.0</span><span class="p">;</span>
