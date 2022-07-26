@@ -331,7 +331,92 @@ plt.savefig(
     bbox_inches="tight",
 )
 ```
-![Sonic and expendable anemometer results for position 1](/pics/position1-scatter.png)
-![Sonic and expemnable anemometer results for position 2](/pics/position2-scatter.png)
+![Sonic and expendable anemometer results for position 1.](/pics/position1-scatter.png)
+![Sonic and expemnable anemometer results for position 2.](/pics/position2-scatter.png)
+
+Next we need to conduct multiple linear regression to find the correction curves for each of the 28 sensors. 
+
+First we need to import the statistics packages. 
 
 
+```
+    from functools import reduce
+    from pylab import *
+    from sklearn import linear_model, feature_selection
+    import statsmodels.api as sm
+    import seaborn as sns
+```
+
+Now we can solve for the Pearson Correlation between the sonic and the expendable sensors.
+
+```
+    # ### Pearson correlation
+    # Solve Pearson correlation prior to linear regression
+    for u in range(0,28):
+        wind_r = round(df_wsp[f"wind{sens[u]}"].corr(sonic_in.iloc[:,0]), 4)
+        wind_rs.append(wind_r)
+        print(f"Pearson correlation for (ubc_wind{sens[u]},sonic) = {wind_r}")
+```
+Setup the color map and figure size.
+
+```
+    ny = len(sens) // 2
+    nx = len(sens) - ny
+    cmap = cm.get_cmap("jet", len(sens))
+    colors = []
+    for i in range(cmap.N):
+        rgba = cmap(i)
+        #print(matplotlib.colors.rgb2hex(rgba))
+        colors.append(matplotlib.colors.rgb2hex(rgba))
+    color = colors[i]
+```
+The next function creates the mulitple linear regression model for each sensor and plots it.
+```
+    def make_mlr(i):
+        X = df_wsp[f"wind{sens[i]}"].dropna().values[:, np.newaxis]
+        y = sonic_in.iloc[0:len(df_wsp[f"wind{sens[i]}"].dropna()),1].values
+        lm_MLR = linear_model.LinearRegression()
+        model = lm_MLR.fit(X, y)
+        ypred_MLR = lm_MLR.predict(X)  # y predicted by MLR
+        intercept_MLR = lm_MLR.intercept_  # intercept predicted by MLR
+        coef_MLR = lm_MLR.coef_  # regression coefficients in MLR model
+        R2_MLR = lm_MLR.score(X, y)  # R-squared value from MLR model
+
+        # print("MLR results:")
+        # print(f"a0 = {intercept_MLR}")
+
+        coeff = {"a0": intercept_MLR}
+        for j in range(len(coef_MLR)):
+            coeff.update({f"a{j+1}": coef_MLR[j]})
+            # print(f"a{j+1} = {coef_MLR[j]}")
+        if len(coeff) > 2:
+            raise ValueError("This is a linear model, code only does single")
+        else:
+            pass
+        ax = fig.add_subplot(7, 4, i + 1)
+        ax.set_ylabel(r"Cup Wind Speed ($\frac{m}{s}$)", fontsize=14)
+        ax.set_xlabel(r"Sonic Wind Speed ($\frac{m}{s}$)", fontsize=14)
+        ax.tick_params(axis="both", which="major", labelsize=13)
+        ax.xaxis.grid(color="gray", linestyle="dashed")
+        ax.yaxis.grid(color="gray", linestyle="dashed")
+        sns.regplot(x=y, y=ypred_MLR, color=colors[i])
+        # print(coeff)
+        # print(coef_MLR)
+
+        ax.set_title(
+            f"UBC-WIND-{sens[i]}  MLR "
+            + r"$R^{2}$"
+            + f"= {round(R2_MLR,4)} \n y = {round(coeff['a0'],4)} + {round(coeff['a1'],4)}x"
+        )
+        return
+```
+Read in function for each sensor. 
+```
+    fig = plt.figure(figsize=(7* 5, 4 * 5))  # (Width, height) in inches.
+    for i in range(len(sens)):
+        make_mlr(i)
+    fig.tight_layout()
+    fig.savefig(str(img_dir) + f"//position2-mlr.png", dpi=250, bbox_inches="tight")
+```
+![Multiple linear regression for all the expendable sensors in position 1.](/pics/position1-mlr.png)
+![Multiple linear regression for all the expendable sensors in position 2.](/pics/position2-mlr.png)

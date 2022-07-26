@@ -10,13 +10,13 @@ The wind sensors are composed of:
 - Arduino UNO SD card board extension
 
 The full circuit diagram for the setup is shown below:
-![Wind Sensor Circuit Diagram](/pics/circuit_diagram.png)
+![Wind Sensor Circuit Diagram.](/pics/circuit_diagram.png)
 
 This setup allows the Davis station to be placed at canopy height (4-6m) with the circuit board and sd card buried beneath ground for safe keeping. Since water is the main issue of concern when burying the circuit board under the ground, the electronics were placed in tupperware containers with all holes sealed with shoe goo.
 
 
-![Full instrument setup](/pics/expendable_sensors.jpg)
+![Full instrument setup.](/pics/expendable_sensors.jpg)
 
 To place the sensors at canopy height, they are mounted onto two sections of 10ft aluminuim poles and secured via three guy wires to nearby trees. 
 
-![Sensor field mount setup](/pics/field_setup.png)
+![Sensor field mount setup.](/pics/field_setup.png)

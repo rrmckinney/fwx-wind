@@ -567,8 +567,88 @@ title="Print to PDF"
 <span class="p">)</span>
 </pre></div>
 </div>
-<p><img alt="Sonic and expendable anemometer results for position 1" src="_images/position1-scatter.png" />
-<img alt="Sonic and expemnable anemometer results for position 2" src="_images/position2-scatter.png" /></p>
+<p><img alt="Sonic and expendable anemometer results for position 1." src="_images/position1-scatter.png" />
+<img alt="Sonic and expemnable anemometer results for position 2." src="_images/position2-scatter.png" /></p>
+<p>Next we need to conduct multiple linear regression to find the correction curves for each of the 28 sensors.</p>
+<p>First we need to import the statistics packages.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+    <span class="kn">from</span> <span class="nn">pylab</span> <span class="kn">import</span> <span class="o">*</span>
+    <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">linear_model</span><span class="p">,</span> <span class="n">feature_selection</span>
+    <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+    <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+</pre></div>
+</div>
+<p>Now we can solve for the Pearson Correlation between the sonic and the expendable sensors.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># ### Pearson correlation</span>
+    <span class="c1"># Solve Pearson correlation prior to linear regression</span>
+    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">28</span><span class="p">):</span>
+        <span class="n">wind_r</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">df_wsp</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;wind</span><span class="si">{</span><span class="n">sens</span><span class="p">[</span><span class="n">u</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">sonic_in</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">wind_rs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wind_r</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pearson correlation for (ubc_wind</span><span class="si">{</span><span class="n">sens</span><span class="p">[</span><span class="n">u</span><span class="p">]</span><span class="si">}</span><span class="s2">,sonic) = </span><span class="si">{</span><span class="n">wind_r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Setup the color map and figure size.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">ny</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sens</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sens</span><span class="p">)</span> <span class="o">-</span> <span class="n">ny</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;jet&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sens</span><span class="p">))</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cmap</span><span class="o">.</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">rgba</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="c1">#print(matplotlib.colors.rgb2hex(rgba))</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">rgb2hex</span><span class="p">(</span><span class="n">rgba</span><span class="p">))</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The next function creates the mulitple linear regression model for each sensor and plots it.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">make_mlr</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">df_wsp</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;wind</span><span class="si">{</span><span class="n">sens</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">sonic_in</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">df_wsp</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;wind</span><span class="si">{</span><span class="n">sens</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()),</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">lm_MLR</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">LinearRegression</span><span class="p">()</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">lm_MLR</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">ypred_MLR</span> <span class="o">=</span> <span class="n">lm_MLR</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>  <span class="c1"># y predicted by MLR</span>
+        <span class="n">intercept_MLR</span> <span class="o">=</span> <span class="n">lm_MLR</span><span class="o">.</span><span class="n">intercept_</span>  <span class="c1"># intercept predicted by MLR</span>
+        <span class="n">coef_MLR</span> <span class="o">=</span> <span class="n">lm_MLR</span><span class="o">.</span><span class="n">coef_</span>  <span class="c1"># regression coefficients in MLR model</span>
+        <span class="n">R2_MLR</span> <span class="o">=</span> <span class="n">lm_MLR</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>  <span class="c1"># R-squared value from MLR model</span>
+
+        <span class="c1"># print(&quot;MLR results:&quot;)</span>
+        <span class="c1"># print(f&quot;a0 = {intercept_MLR}&quot;)</span>
+
+        <span class="n">coeff</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;a0&quot;</span><span class="p">:</span> <span class="n">intercept_MLR</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coef_MLR</span><span class="p">)):</span>
+            <span class="n">coeff</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;a</span><span class="si">{</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">coef_MLR</span><span class="p">[</span><span class="n">j</span><span class="p">]})</span>
+            <span class="c1"># print(f&quot;a{j+1} = {coef_MLR[j]}&quot;)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This is a linear model, code only does single&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Cup Wind Speed ($\frac</span><span class="si">{m}{s}</span><span class="s2">$)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Sonic Wind Speed ($\frac</span><span class="si">{m}{s}</span><span class="s2">$)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;major&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">)</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">regplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">ypred_MLR</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="c1"># print(coeff)</span>
+        <span class="c1"># print(coef_MLR)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;UBC-WIND-</span><span class="si">{</span><span class="n">sens</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">  MLR &quot;</span>
+            <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$R^</span><span class="si">{2}</span><span class="s2">$&quot;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;= </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">R2_MLR</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> y = </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">coeff</span><span class="p">[</span><span class="s1">&#39;a0&#39;</span><span class="p">],</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">coeff</span><span class="p">[</span><span class="s1">&#39;a1&#39;</span><span class="p">],</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">x&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span>
+</pre></div>
+</div>
+<p>Read in function for each sensor.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">5</span><span class="p">))</span>  <span class="c1"># (Width, height) in inches.</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sens</span><span class="p">)):</span>
+        <span class="n">make_mlr</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">img_dir</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;//position2-mlr.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><img alt="Multiple linear regression for all the expendable sensors in position 1." src="_images/position1-mlr.png" />
+<img alt="Multiple linear regression for all the expendable sensors in position 2." src="_images/position2-mlr.png" /></p>
 </div>
 
 
