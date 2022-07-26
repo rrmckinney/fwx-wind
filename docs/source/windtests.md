@@ -418,5 +418,6 @@ Read in function for each sensor.
     fig.tight_layout()
     fig.savefig(str(img_dir) + f"//position2-mlr.png", dpi=250, bbox_inches="tight")
 ```
-<img src="pics/position1-mlr.png" width="100" height="100">
-![Multiple linear regression for all the expendable sensors in position 2.](/pics/position2-mlr.png)
+
+![Multiple linear regression for all the expendable sensors in position 1.](/pics/position1-mlr-1.png)
+![Multiple linear regression for all the expendable sensors in position 1.](/pics/position1-mlr-1.png)
