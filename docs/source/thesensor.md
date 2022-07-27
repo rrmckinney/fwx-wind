@@ -2,7 +2,7 @@
 
 The expendable wind sensors were adapted from [cactus.io](http://cactus.io/hookups/weather/anemometer/davis/hookup-arduino-to-davis-anemometer).
 
-Wildfire models serve as an invaluable tool in aiding first reposnders in estimating fire growth and spread dynamics [(NCAR)](https://ral.ucar.edu/solutions/products/wrf-fire-wildland-fire-modeling). Validation of these models is difficult as wildfires are dangerous at scale [(Morvan,2019)](https://doi.org/10.1007/978-3-319-51727-8_59-1). At UBC, we hope to overcome this barrier though with expendable wind sensors that will be placed in the path of prescribed wildfires.
+Wildfire models serve as an invaluable tool in aiding first reposnders in estimating fire growth and spread dynamics [(NCAR)](https://ral.ucar.edu/solutions/products/wrf-fire-wildland-fire-modeling). Validation of these models is difficult as wildfires are dangerous at scale [(Morvan,2019)](https://doi.org/10.1007/978-3-319-51727-8_59-1). At UBC, we hope to overcome this barrier though with low-cost expendable wind sensors that will be placed in the path of prescribed wildfires.
 
 The configuration utilizes a Davis cup anemometer and Arduino hardware. the Davis cup anemometers are reliable instruments that are used for a suite of applications, including a network of wind sensors currently ran by the UBC Weather Forecasting Research Team [(WFRT)](https://doi.org/10.1007/978-3-319-51727-8_59-1). Arduino is also a commenable comapany with low-cost hardware and open source software that is used for many applications as well [(adafruit)](https://www.adafruit.com/category/17). 
 

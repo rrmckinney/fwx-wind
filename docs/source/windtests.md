@@ -1,10 +1,10 @@
 # Wind Tunnel Tests
 
-As mentioned in the Wind Tunnel Build section, the expendable wind sensors were compared to a [3D sonic anemometer](https://gillinstruments.com/compare-3-axis-anemometers/windmaster-3axis/). 
+As mentioned in the Wind Tunnel Build section, the expendable (cup) wind sensors were compared to a [3D sonic anemometer](https://gillinstruments.com/compare-3-axis-anemometers/windmaster-3axis/). 
 
 Through testing it was determined that there was a 1 m/s difference in wind speed from the fan between the two sections of the tunnel. Therefore, the sonic was compared to the expendable wind senors when they were in the same spatial location rather than at the same time. 
 
-Both the sonic and expendable wind senors were placed on either side of the tunnel for a 15 min test in which the three different fan speeds were ran for 5 mins. This allowed us to create two different multiple linear regression curves for each of the expendable wind sensors as compared to the sonic. 
+Both the sonic and expendable wind senors were placed on either side of the tunnel for a 15 min test in which the three different fan speeds were run for 5 mins. This allowed us to create two different multiple linear regression curves for each of the expendable wind sensors as compared to the sonic. 
 
 Lets see the results!
 
@@ -29,7 +29,7 @@ import warnings
 
 warnings.filterwarnings("ignore")
 ```
-Next, import the sonic data from the tests. 
+Next, we need to import the sonic data from the tests. 
 
 ```
 def get_sonic(filein, i, length):
@@ -117,7 +117,7 @@ def get_sonic(filein, i, length):
 
 ```
 
-Read in cup data and split into the three different tests using time stamps recorded.
+We can now read in cup data. This also requires splitting the data into the three different tests using the time stamps we recorded manually.
 
 ```
     for i in range(0,len(c[0])):
@@ -190,7 +190,7 @@ Read in cup data and split into the three different tests using time stamps reco
 
 ```
 
-Match sonic data to cup data for the three different tests.
+Now we can match the sonic data to the cup data for each of the three different tests.
 
 ```
 for i in range(0,len(s[0])):
@@ -227,7 +227,7 @@ for i in range(0,len(s[0])):
 
 ```
 
-Plot sonic and cup data for the same position for all three fan speeds.
+With all the data processed, we can plot sonic and cup data for the same position for all three fan speeds.
 
 ```
 
@@ -334,10 +334,9 @@ plt.savefig(
 ![Sonic and expendable anemometer results for position 1.](/pics/position1-scatter.png)
 ![Sonic and expemnable anemometer results for position 2.](/pics/position2-scatter.png)
 
-Next we need to conduct multiple linear regression to find the correction curves for each of the 28 sensors. 
+Now that we can visaully see the comparison of the sonic and the cups, we can conduct statistical tests to qunatify how each of the cups did. Multiple linear regression was conducted to find the correlation and correction curves for each of the 28 sensors.  
 
 First we need to import the statistics packages. 
-
 
 ```
     from functools import reduce
@@ -357,7 +356,7 @@ Now we can solve for the Pearson Correlation between the sonic and the expendabl
         wind_rs.append(wind_r)
         print(f"Pearson correlation for (ubc_wind{sens[u]},sonic) = {wind_r}")
 ```
-Setup the color map and figure size.
+Prior to plotting, we need to setup the color map and figure size.
 
 ```
     ny = len(sens) // 2
@@ -410,7 +409,7 @@ The next function creates the mulitple linear regression model for each sensor a
         )
         return
 ```
-Read in function for each sensor. 
+Last;y, we need to read in the function for each sensor. 
 ```
     fig = plt.figure(figsize=(7* 5, 4 * 5))  # (Width, height) in inches.
     for i in range(len(sens)):

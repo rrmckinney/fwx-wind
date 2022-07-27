@@ -9,7 +9,7 @@ The sensors are controlled by Arduino sketches. Three modules from Arduino were 
 #include <SPI.h>
 ```
 
-Two pins are used to read the wind speed and wind direction from the davis senor. Wind speed is connected to a digital pin and wind direction is connected to a analog pin. If testing indicated the wind vane having an offset from the intented rest position, it can also be defined as a variable here. 
+Two pins are used to read the wind speed and wind direction from the davis sensor. Wind speed is connected to a digital pin and wind direction is connected to a analog pin. If testing indicated the wind vane having an offset from the intented rest position, it can also be defined as a variable here. 
 
 ```
 #define WindSensor_Pin (2) // digital pin for wind speed sensor
@@ -17,7 +17,7 @@ Two pins are used to read the wind speed and wind direction from the davis senor
 #define VaneOffset 0 // define the offset for caclulating wind direction
 ```
 
-Set variables for the sketch. 
+Next, we will set the variables for the sketch. 
 
 ```
 volatile bool isSampleRequired; // this is set every 2.5sec to generate wind speed
@@ -34,14 +34,14 @@ int lastDirValue; // last recorded direction value
 const int chipSelect = 10; // pin with sd card connected
 ```
 
-Setup file for data to be written to. 
+And setup a file for data to be written to. 
 
 ```
 static char fileName[] = "windtest.txt";
 static char header[] = {"time\twsp\twdir"};
 ```
 
-Setup loop to reset senors and ensure everything is connected properly. 
+We can now get started with the bulk of the code. Here we will setup a loop to reset the senors and ensure everything is connected properly. 
 
 ```
 void setup() {
@@ -93,7 +93,7 @@ void setup() {
 
 }
 ```
-Setup loop to write wind speed and direction to the ouput file. The sensor does not have an internal clock, but does keep track of millisecinds since power was introduced. However, due to memory it can only keep track of a certain number of milliseconds, so we need to convert them to hours:minutes:seconds.
+With the sensor preopped, we will now setup a loop to write wind speed and direction to the ouput file. The sensor does not have an internal clock, but does keep track of the milliseconds elapsed since power was introduced. Due to memory limits though, it can only keep track of a certain number of milliseconds. Thus, we need to convert them to hours:minutes:seconds.
 
 ```
 void loop() {
@@ -163,7 +163,7 @@ void isr_timer() {
   }
 }
 ```
-Function for getting wind direction. Wind direction is read as an offset from the orgin position (0 degrees) up to 1023 degrees. This needs to be re-mapped to follow the 360 degrees used for direction. 
+Wind direction is read as an offset from the orgin position (0 degrees) up to 1023 degrees. This needs to be re-mapped to follow the 360 degrees used for direction. 
 ```
 void getWindDirection() {
   //vaneValue = analogRead(WindVane_Pin); 

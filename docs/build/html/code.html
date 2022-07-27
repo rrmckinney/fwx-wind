@@ -256,13 +256,13 @@ title="Print to PDF"
 <span class="c1">#include &lt;SPI.h&gt;</span>
 </pre></div>
 </div>
-<p>Two pins are used to read the wind speed and wind direction from the davis senor. Wind speed is connected to a digital pin and wind direction is connected to a analog pin. If testing indicated the wind vane having an offset from the intented rest position, it can also be defined as a variable here.</p>
+<p>Two pins are used to read the wind speed and wind direction from the davis sensor. Wind speed is connected to a digital pin and wind direction is connected to a analog pin. If testing indicated the wind vane having an offset from the intented rest position, it can also be defined as a variable here.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define WindSensor_Pin (2) // digital pin for wind speed sensor</span>
 <span class="c1">#define WindVane_Pin (A4) // analog pin for wind direction sensor</span>
 <span class="c1">#define VaneOffset 0 // define the offset for caclulating wind direction</span>
 </pre></div>
 </div>
-<p>Set variables for the sketch.</p>
+<p>Next, we will set the variables for the sketch.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">volatile</span> <span class="nb">bool</span> <span class="n">isSampleRequired</span><span class="p">;</span> <span class="o">//</span> <span class="n">this</span> <span class="ow">is</span> <span class="nb">set</span> <span class="n">every</span> <span class="mf">2.5</span><span class="n">sec</span> <span class="n">to</span> <span class="n">generate</span> <span class="n">wind</span> <span class="n">speed</span>
 <span class="n">volatile</span> <span class="n">unsigned</span> <span class="nb">int</span> <span class="n">timerCount</span><span class="p">;</span> <span class="o">//</span> <span class="n">used</span> <span class="n">to</span> <span class="n">count</span> <span class="n">ticks</span> <span class="k">for</span> <span class="mf">2.5</span><span class="n">sec</span> <span class="n">timer</span> <span class="n">count</span>
 <span class="n">volatile</span> <span class="n">unsigned</span> <span class="n">long</span> <span class="n">rotations</span><span class="p">;</span> <span class="o">//</span> <span class="n">cup</span> <span class="n">rotation</span> <span class="n">counter</span> <span class="k">for</span> <span class="n">wind</span> <span class="n">speed</span> <span class="n">calcs</span>
@@ -277,12 +277,12 @@ title="Print to PDF"
 <span class="n">const</span> <span class="nb">int</span> <span class="n">chipSelect</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span> <span class="o">//</span> <span class="n">pin</span> <span class="k">with</span> <span class="n">sd</span> <span class="n">card</span> <span class="n">connected</span>
 </pre></div>
 </div>
-<p>Setup file for data to be written to.</p>
+<p>And setup a file for data to be written to.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">char</span> <span class="n">fileName</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;windtest.txt&quot;</span><span class="p">;</span>
 <span class="n">static</span> <span class="n">char</span> <span class="n">header</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;time</span><span class="se">\t</span><span class="s2">wsp</span><span class="se">\t</span><span class="s2">wdir&quot;</span><span class="p">};</span>
 </pre></div>
 </div>
-<p>Setup loop to reset senors and ensure everything is connected properly.</p>
+<p>We can now get started with the bulk of the code. Here we will setup a loop to reset the senors and ensure everything is connected properly.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">setup</span><span class="p">()</span> <span class="p">{</span>
   <span class="o">//</span> <span class="n">This</span> <span class="n">prevents</span> <span class="nb">any</span> <span class="n">pins</span> <span class="n">floating</span><span class="o">.</span>
   <span class="o">//</span><span class="k">for</span> <span class="p">(</span><span class="n">byte</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">19</span> <span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
@@ -333,7 +333,7 @@ title="Print to PDF"
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Setup loop to write wind speed and direction to the ouput file. The sensor does not have an internal clock, but does keep track of millisecinds since power was introduced. However, due to memory it can only keep track of a certain number of milliseconds, so we need to convert them to hours:minutes:seconds.</p>
+<p>With the sensor preopped, we will now setup a loop to write wind speed and direction to the ouput file. The sensor does not have an internal clock, but does keep track of the milliseconds elapsed since power was introduced. Due to memory limits though, it can only keep track of a certain number of milliseconds. Thus, we need to convert them to hours:minutes:seconds.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">loop</span><span class="p">()</span> <span class="p">{</span>
 
 <span class="o">//</span>    <span class="n">getWindDirection</span><span class="p">();</span>
@@ -402,7 +402,7 @@ title="Print to PDF"
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Function for getting wind direction. Wind direction is read as an offset from the orgin position (0 degrees) up to 1023 degrees. This needs to be re-mapped to follow the 360 degrees used for direction.</p>
+<p>Wind direction is read as an offset from the orgin position (0 degrees) up to 1023 degrees. This needs to be re-mapped to follow the 360 degrees used for direction.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">getWindDirection</span><span class="p">()</span> <span class="p">{</span>
   <span class="o">//</span><span class="n">vaneValue</span> <span class="o">=</span> <span class="n">analogRead</span><span class="p">(</span><span class="n">WindVane_Pin</span><span class="p">);</span> 
  <span class="o">//</span> <span class="n">vaneDirection</span> <span class="o">=</span> <span class="p">(</span><span class="n">vaneValue</span> <span class="o">/</span> <span class="mf">1024.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">360.0</span><span class="p">;</span>
